@@ -40,9 +40,9 @@ export async function cadastrar(req: Request, res: Response, next: NextFunction)
 
 export async function atualizar(req: Request, res: Response, next: NextFunction) {
     try {
-        const id = req.body.id;
-        const data = req.body;
-        const instituicaoAtualizada = instituicaoService.atualizarInstituicao(id, data);
+        const { id, ...resto } = req.body;
+        const data = cadastrarInstituicao.parse(resto);
+        const instituicaoAtualizada = await instituicaoService.atualizarInstituicao(id, data);
 
         res.status(200).json({ msg: "Instituição atualizada", instituicao: instituicaoAtualizada });
     } catch (error) {
@@ -53,11 +53,10 @@ export async function atualizar(req: Request, res: Response, next: NextFunction)
 export async function excluir(req: Request, res: Response, next: NextFunction) {
     try {
         const id = req.body.id;
-        const deletarInstituicao = instituicaoService.excluir(id);
+        await instituicaoService.excluir(id);
 
         res.status(200).json({ msg: "Instituição excluída" });
     } catch (error) {
         next(error);
     }
 }
-
